@@ -30,7 +30,7 @@ def generate_qr():
     )
 
     qr.add_data(
-    f"http://192.168.1.39:5000/attendance/{qr_id}"
+    f"https://qr-attendance-system-5gku.onrender.com/attendance/{qr_id}"
 )
 
 
