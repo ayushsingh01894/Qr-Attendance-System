@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Student Attendance</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(120deg, #eef2f7, #dbeafe);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+      }
+
+      .card {
+        background: #ffffff;
+        width: 100%;
+        max-width: 360px;
+        padding: 26px 22px;
+        border-radius: 16px;
+        box-shadow:
+          0 10px 25px rgba(0, 0, 0, 0.12),
+          0 0 0 1px rgba(0, 0, 0, 0.05);
+        text-align: center;
+      }
+
+      .card h3 {
+        margin-bottom: 18px;
+        color: #1f2937;
+        font-size: 20px;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+        font-size: 14px;
+        outline: none;
+        transition:
+          border-color 0.25s ease,
+          box-shadow 0.25s ease;
+      }
+
+      input:focus {
+        border-color: #1cc88a;
+        box-shadow: 0 0 0 3px rgba(28, 200, 138, 0.15);
+      }
+
+      button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 12px;
+        background: linear-gradient(135deg, #1cc88a, #16a34a);
+        color: #ffffff;
+        border: none;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          transform 0.25s ease,
+          box-shadow 0.25s ease;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 18px rgba(22, 163, 74, 0.35);
+      }
+
+      #msg {
+        margin-top: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #dc2626;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h3>Student Attendance</h3>
+
+      <input id="roll" placeholder="Roll Number" />
+      <input id="name" placeholder="Name" />
+
+      <button onclick="submitAttendance()">Submit Attendance</button>
+
+      <div id="msg"></div>
+    </div>
+
+    <script>
+      function submitAttendance() {
+        fetch("/mark_attendance", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            roll_no: document.getElementById("roll").value,
+            name: document.getElementById("name").value,
+            qr_id: "{{ qr_id }}",
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.status === "success") {
+              document.querySelector(".card").innerHTML = `
+            <h2 style="color:#16a34a;">✔ Attendance Submitted</h2>
+            <p style="color:#374151;">Thank you for your presence</p>
+
+            `;
+            } else {
+              document.getElementById("msg").innerText = data.message;
+            }
+          });
+      }
+    </script>
+  </body>
+</html>

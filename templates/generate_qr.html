@@ -1,0 +1,157 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Generate Attendance QR</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #4e73df, #1cc88a);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.95);
+        width: 380px;
+        padding: 28px 25px;
+        border-radius: 18px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        animation: fadeIn 0.5s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      h2 {
+        margin: 0 0 15px;
+        color: #1f2937;
+        font-size: 22px;
+      }
+
+      .qr-box {
+        background: #f1f5f9;
+        padding: 15px;
+        border-radius: 14px;
+        margin: 15px 0;
+      }
+
+      .qr-box img {
+        width: 220px;
+        height: 220px;
+      }
+
+      .info {
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        padding: 12px;
+        border-radius: 12px;
+        font-size: 14px;
+        color: #374151;
+        margin-top: 10px;
+      }
+
+      .info p {
+        margin: 6px 0;
+      }
+
+      .info strong {
+        color: #111827;
+      }
+
+      .valid {
+        margin-top: 12px;
+        color: #dc2626;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .btn {
+        margin-top: 18px;
+        display: block;
+        padding: 12px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #4e73df, #4338ca);
+        color: white;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(79, 70, 229, 0.35);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>Attendance QR Code</h2>
+
+      <div class="qr-box">
+        <img src="{{ qr_image }}" alt="QR Code" />
+      </div>
+
+      <div class="info">
+        <p><strong>QR ID:</strong> {{ qr_id }}</p>
+        <p><strong>Class Duration:</strong> 1 Hour</p>
+      </div>
+
+      <p class="valid">Valid for 1 hour only</p>
+      <p class="valid">Expires in: <span id="timer">01:00:00</span></p>
+
+      <a class="btn" href="/dashboard">Back to Dashboard</a>
+    </div>
+    <script>
+      // 1 hour = 3600 seconds
+      let timeLeft = 60 * 60;
+
+      const timerElement = document.getElementById("timer");
+
+      function startCountdown() {
+        const interval = setInterval(() => {
+          let hours = Math.floor(timeLeft / 3600);
+          let minutes = Math.floor((timeLeft % 3600) / 60);
+          let seconds = timeLeft % 60;
+
+          // Format: 01:05:09
+          timerElement.textContent =
+            String(hours).padStart(2, "0") +
+            ":" +
+            String(minutes).padStart(2, "0") +
+            ":" +
+            String(seconds).padStart(2, "0");
+
+          if (timeLeft <= 0) {
+            clearInterval(interval);
+            timerElement.textContent = "Expired";
+            timerElement.style.color = "gray";
+
+            document.querySelector(".qr-box").style.opacity = "0.3";
+          }
+
+          timeLeft--;
+        }, 1000);
+      }
+
+      startCountdown();
+    </script>
+  </body>
+</html>
